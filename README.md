@@ -303,6 +303,111 @@ curl -X GET http://localhost:8000/api/posts/1 \
 - `404 Not Found` (post no existe).
 
 ---
+## 6. Actualizar Post (Protegido)
+
+**Endpoint:** `PUT /api/posts/{id}`
+
+### Cabeceras:
+```bash
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+### Cuerpo (Body):
+```json
+{
+    "title": "Título actualizado",
+    "content": "Contenido actualizado..."
+}
+```
+
+### Comando cURL:
+```bash
+curl -X PUT http://localhost:8000/api/posts/1 \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer 2|ijklmnop56789012" \
+-d '{"title": "Título actualizado", "content": "Contenido actualizado..."}'
+```
+
+### Respuesta exitosa (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Post actualizado exitosamente",
+    "data": {
+        "id": 1,
+        "title": "Título actualizado",
+        "content": "Contenido actualizado..."
+    }
+}
+```
+
+### Errores comunes:
+- `403 Forbidden` (usuario no es dueño del post).
+
+---
+
+## 7. Eliminar Post (Protegido)
+
+**Endpoint:** `DELETE /api/posts/{id}`
+
+### Comando cURL:
+```bash
+curl -X DELETE http://localhost:8000/api/posts/1 \
+-H "Authorization: Bearer 2|ijklmnop56789012"
+```
+
+### Respuesta exitosa (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Post eliminado exitosamente"
+}
+```
+
+---
+
+## 8. Agregar Comentario (Protegido)
+
+**Endpoint:** `POST /api/posts/{postId}/comments`
+
+### Cabeceras:
+```bash
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+### Cuerpo (Body):
+```json
+{
+    "content": "¡Excelente post!"
+}
+```
+
+### Comando cURL:
+```bash
+curl -X POST http://localhost:8000/api/posts/1/comments \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer 2|ijklmnop56789012" \
+-d '{"content": "¡Excelente post!"}'
+```
+
+### Respuesta exitosa (201 Created):
+```json
+{
+    "status": "success",
+    "message": "Comentario creado exitosamente",
+    "data": {
+        "id": 1,
+        "post_id": 1,
+        "user_id": 1,
+        "content": "¡Excelente post!",
+        "created_at": "2023-10-10T12:05:00.000000Z"
+    }
+}
+```
+
+---
 
 ## Secuencia Recomendada para Probar
 1. Registra un usuario (`POST /api/register`).
@@ -312,6 +417,8 @@ curl -X GET http://localhost:8000/api/posts/1 \
 5. Agrega un comentario (`POST /api/posts/1/comments`).
 6. Actualiza el post (`PUT /api/posts/1`).
 7. Elimina el post (`DELETE /api/posts/1`).
+
+
 
 ---
 

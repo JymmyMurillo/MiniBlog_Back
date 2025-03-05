@@ -1,66 +1,344 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MiniBlog API 🚀
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API para gestionar usuarios, posts y comentarios en un miniblog.
 
-## About Laravel
+## Tecnologías Utilizadas
+- **Backend**: Laravel 10
+- **Autenticación**: Laravel Sanctum (JWT)
+- **Base de datos**: MySQL
+- **Estilos**: No aplica (API REST)
+- **Otros**: Faker (datos de prueba), Eloquent ORM
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Inicialización del Proyecto
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Clonar repositorio**:
 
-## Learning Laravel
+```bash
+git clone https://github.com/JymmyMurillo/MiniBlog_Back.git
+cd MiniBlog_Back
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Instalar dependencias**:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. **Configurar entorno**:
 
-## Laravel Sponsors
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. **Configurar base de datos (en .env)**:
 
-### Premium Partners
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=miniblog
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+5. **Ejecutar migraciones y seeders**:
 
-## Contributing
+```bash
+php artisan migrate:fresh --seed
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+6. **Iniciar servidor**:
 
-## Code of Conduct
+```bash
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Estructura del Proyecto
 
-## Security Vulnerabilities
+```plaintext
+MiniBlog_Back/
+├── app/
+│   ├── Models/
+│   │   ├── User.php          # Modelo de usuario (rel: posts, comments)
+│   │   ├── Post.php          # Modelo de post (rel: user, comments)
+│   │   └── Comment.php       # Modelo de comentario (rel: user, post)
+│   └── Http/Controllers/
+│       ├── AuthController.php    # Registro/login
+│       ├── PostController.php    # CRUD posts
+│       └── CommentController.php # Crear comentarios
+├── database/
+│   ├── factories/            # Datos de prueba
+│   │   ├── UserFactory.php
+│   │   ├── PostFactory.php
+│   │   └── CommentFactory.php
+│   └── seeders/              # Seeders
+│       ├── DatabaseSeeder.php
+│       ├── UsersTableSeeder.php
+│       ├── PostsTableSeeder.php
+│       └── CommentsTableSeeder.php
+└── routes/api.php            # Definición de endpoints
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Endpoints
 
-## License
+### Autenticación 🔐
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 1. Registrar Usuario
+
+**Endpoint:** `POST /api/register`
+
+### Cabeceras:
+```bash
+Content-Type: application/json
+```
+
+### Cuerpo (Body):
+```json
+{
+    "name": "Ana López",
+    "email": "ana@example.com",
+    "password": "password123"
+}
+```
+
+### Comando cURL:
+```bash
+curl -X POST http://localhost:8000/api/register \  
+-H "Content-Type: application/json" \  
+-d '{"name": "Ana López", "email": "ana@example.com", "password": "password123"}'
+```
+
+### Respuesta exitosa (201 Created):
+```json
+{
+    "status": "success",
+    "message": "Usuario registrado exitosamente",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "Ana López",
+            "email": "ana@example.com"
+        },
+        "token": "1|abcdefgh12345678"
+    }
+}
+```
+
+### Errores comunes:
+- `400 Bad Request` (campos faltantes).
+- `422 Unprocessable Entity` (email duplicado).
+
+---
+
+## 2. Iniciar Sesión
+
+**Endpoint:** `POST /api/login`
+
+### Cabeceras:
+```bash
+Content-Type: application/json
+```
+
+### Cuerpo (Body):
+```json
+{
+    "email": "ana@example.com",
+    "password": "password123"
+}
+```
+
+### Comando cURL:
+```bash
+curl -X POST http://localhost:8000/api/login \  
+-H "Content-Type: application/json" \  
+-d '{"email": "ana@example.com", "password": "password123"}'
+```
+
+### Respuesta exitosa (200 OK):
+```json
+{
+    "status": "success",
+    "message": "Login exitoso",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "Ana López",
+            "email": "ana@example.com"
+        },
+        "token": "2|ijklmnop56789012"
+    }
+}
+```
+
+### Errores comunes:
+- `401 Unauthorized` (credenciales incorrectas).
+
+---
+
+## 3. Crear Post (Protegido)
+
+**Endpoint:** `POST /api/posts`
+
+### Cabeceras:
+```bash
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+### Cuerpo (Body):
+```json
+{
+    "title": "Mi primer post",
+    "content": "Contenido del post..."
+}
+```
+
+### Comando cURL:
+```bash
+curl -X POST http://localhost:8000/api/posts \  
+-H "Content-Type: application/json" \  
+-H "Authorization: Bearer 2|ijklmnop56789012" \  
+-d '{"title": "Mi primer post", "content": "Contenido del post..."}'
+```
+
+### Respuesta exitosa (201 Created):
+```json
+{
+    "status": "success",
+    "message": "Post creado exitosamente",
+    "data": {
+        "id": 1,
+        "user_id": 1,
+        "title": "Mi primer post",
+        "content": "Contenido del post...",
+        "created_at": "2023-10-10T12:00:00.000000Z"
+    }
+}
+```
+
+### Errores comunes:
+- `401 Unauthorized` (token inválido o ausente).
+- `422 Unprocessable Entity` (validación fallida).
+
+---
+
+## 4. Listar Posts
+
+**Endpoint:** `GET /api/posts`
+
+### Cabeceras:
+```bash
+Authorization: Bearer <token>
+```
+
+### Comando cURL:
+```bash
+curl -X GET http://localhost:8000/api/posts \  
+-H "Authorization: Bearer 2|ijklmnop56789012"
+```
+
+### Respuesta exitosa (200 OK):
+```json
+{
+    "status": "success",
+    "data": [
+        {
+            "id": 1,
+            "title": "Mi primer post",
+            "content": "Contenido del post...",
+            "user": {
+                "id": 1,
+                "name": "Ana López"
+            },
+            "comments": []
+        }
+    ]
+}
+```
+
+---
+
+## 5. Ver Post Específico
+
+**Endpoint:** `GET /api/posts/{id}`
+
+**Ejemplo:** `GET /api/posts/1`
+
+### Comando cURL:
+```bash
+curl -X GET http://localhost:8000/api/posts/1 \  
+-H "Authorization: Bearer 2|ijklmnop56789012"
+```
+
+### Respuesta exitosa (200 OK):
+```json
+{
+    "status": "success",
+    "data": {
+        "id": 1,
+        "title": "Mi primer post",
+        "content": "Contenido del post...",
+        "user": {
+            "id": 1,
+            "name": "Ana López"
+        },
+        "comments": [
+            {
+                "id": 1,
+                "content": "¡Excelente post!",
+                "user": {
+                    "id": 2,
+                    "name": "Carlos Ruiz"
+                }
+            }
+        ]
+    }
+}
+```
+
+### Errores comunes:
+- `404 Not Found` (post no existe).
+
+---
+
+## Secuencia Recomendada para Probar
+1. Registra un usuario (`POST /api/register`).
+2. Inicia sesión (`POST /api/login`) y guarda el token.
+3. Crea un post (`POST /api/posts`).
+4. Lista los posts (`GET /api/posts`).
+5. Agrega un comentario (`POST /api/posts/1/comments`).
+6. Actualiza el post (`PUT /api/posts/1`).
+7. Elimina el post (`DELETE /api/posts/1`).
+
+---
+
+## Seeders y Datos de Prueba 🌱
+
+**Ejecutar datos masivos**:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+**Datos generados**:
+- 50 usuarios (`password123` para todos).
+- 200 posts aleatorios.
+- 1000 comentarios.
+
+**Consideraciones**:
+- Los seeders se ejecutan en orden: `Users → Posts → Comments`.
+- Usar `php artisan tinker` para verificar datos.
+
+## Consideraciones Clave 🔑
+
+- **Autenticación JWT**: Todos los endpoints (excepto registro/login) requieren el header `Authorization: Bearer <token>`.
+- **Manejo de errores**:
+  - Códigos HTTP claros (`401, 403, 404, 422`).
+  - Mensajes descriptivos en JSON.
+- **Relaciones**:
+  - Un usuario tiene muchos posts y comentarios.
+  - Un post pertenece a un usuario y tiene muchos comentarios.
+
